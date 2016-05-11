@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 import random
+import tkinter.messagebox as mBox
 
 class Card():
     def __init__(self, suit, num):
@@ -25,7 +26,7 @@ def donothing():
 
 class Game():
     
-    initFund = 1000
+    fund = 1000
     point = 0
     '''Create card deck'''
     deck = []
@@ -45,7 +46,7 @@ class Game():
                 newCard = Card(self.suits[j], self.nums[i])
                 self.deck.append(newCard)
 
-        '''Drawn card display area'''
+        '''Display card history'''
         for i in range (0, 16):
             cardString = StringVar()
             cardString.set("Card")
@@ -59,11 +60,6 @@ class Game():
         for i in range (8, 16):
             self.cardLblList[i].grid(row = (i-8), column = 2, sticky = W+E+N+S)
 
-        card1=self.drawCards(self.deck,self.size)
-        self.calcSum(self.point, card1)
-        card2=self.drawCards(self.deck,self.size)
-        self.calcSum(self.point, card2)
-
         '''Interactive area'''
         
         self.pointStr = StringVar() 
@@ -72,14 +68,12 @@ class Game():
         lblPoint.grid(row = 0, column = 1, rowspan = 2, sticky = W+E+N+S)
        
         self.cardStr = StringVar() 
-        self.cardStr.set( "Card1: " + card1.toStr() )
-        self.cardStrList[0].set("Card: " + str(card1.toStr()))
+        self.cardStr.set( "Card1: "  )
         lblCard = tk.Label( textvariable = self.cardStr, width = 25)
         lblCard.grid(row = 2, column = 1, rowspan = 2, sticky = W+E+N+S)
 
         self.card2Str = StringVar() 
-        self.card2Str.set( "Card2: " + card2.toStr())
-        self.cardStrList[1].set("Card: " + card2.toStr())
+        self.card2Str.set( "Card2: ")
         lblCard2 = tk.Label( textvariable = self.card2Str , width = 25)
         lblCard2.grid(row = 4, column = 1, rowspan = 1, sticky = W+E+N+S)
             
@@ -105,41 +99,55 @@ class Game():
 
     '''handles all the steps of game'''
     def play(self):
-        if (self.numOfDraw == 2): #first draw by user
-            self.card2Str.set("")
-        if (self.size < 1 or self.numOfDraw > 15
-            ): 
+        if (self.size < 1 or self.numOfDraw > 15): 
             pass #TODO popup message 
+        elif (self.numOfDraw == 0): #first draw by user, draw 2 times
+            card1=self.drawCards(self.deck,self.size)
+            self.calcSum(self.point, card1)
+            self.cardStr.set("Card: " + card1.toStr())
+            self.cardStrList[self.numOfDraw - 1].set("Card: " + card1.toStr())
+            
+            card2=self.drawCards(self.deck,self.size)
+            self.calcSum(self.point, card2)
+            self.card2Str.set("Card2: " + card2.toStr())
+            self.cardStrList[self.numOfDraw - 1].set("Card: " + card2.toStr())
+            
+            self.pointStr.set("Current Point: " + str(self.point))       
         else:
             '''Draw cards'''
             card = self.drawCards(self.deck, self.size)
-            '''Calculate points'''
             self.calcSum(self.point, card)
-            '''Update status'''
-            if (self.point<21) :
-                done = False
-                is21 = False
-            elif (self.point == 21):
-                done = True
-                is21 = True
-            else:
-                done = True
-                is21 = False
-            
-
             '''Redraw play board'''
+            self.card2Str.set("")
             self.cardStr.set("Card: " + card.toStr())
             self.cardStrList[self.numOfDraw - 1].set("Card: " + card.toStr())
             self.pointStr.set("Current Point: " + str(self.point))
+
             
-            
-        #return (status[done, is21], point, size) #return value not used
-        
+        '''Update status'''
+        if (self.point<21) :
+            isContinue = mBox.askyesno("Continue?", "Not reached 21, Continue?")
+        elif (self.point == 21):
+            mBox.showinfo("Win", "You Win !")
+            self.fund += 100
+            #TODO: resetBoard
+            #TODO: ask play again
+        else:
+            mBox.showinfo("Lose", "You Lose !")
+            self.fund -=50
+            #TODO: resetBoard
+            #TODO: check fund
+            #TODO: ask playagain
+
+    def resetBoard():
+        pass
+
     
     def resume():
         menubar.entryconfig("Game", state = "normal")
     
     #to draw cards, display cards, calculate sum, decide winning.
+
 
 
 """
