@@ -26,7 +26,7 @@ def donothing():
 
 class Game():
     
-    fund = 1000
+    
     point = 0
     '''Create card deck'''
     deck = []
@@ -40,7 +40,8 @@ class Game():
 
     '''Draw game board'''
     def __init__(self):
-
+        
+        '''Create card deck'''
         for j in range (0, 4):
             for i in range (0, 13):
                 newCard = Card(self.suits[j], self.nums[i])
@@ -127,6 +128,8 @@ class Game():
         '''Update status'''
         if (self.point<21) :
             isContinue = mBox.askyesno("Continue?", "Not reached 21, Continue?")
+            if (isContinue == False):
+                self.resetGame()
         elif (self.point == 21):
             mBox.showinfo("Win", "You Win !")
             self.fund += 100
@@ -135,12 +138,28 @@ class Game():
         else:
             mBox.showinfo("Lose", "You Lose !")
             self.fund -=50
+            self.resetGame()
             #TODO: resetBoard
             #TODO: check fund
             #TODO: ask playagain
 
-    def resetBoard():
-        pass
+    def resetGame(self):
+        for j in range (0, 4):
+            for i in range (0, 13):
+                newCard = Card(self.suits[j], self.nums[i])
+                self.deck.append(newCard)
+
+        self.size = 52
+        self.numOfDraw = 0
+        
+        self.point = 0
+        self.pointStr.set( "Current Point: " + str(self.point) )
+        self.cardStr.set( "Card1: "  )
+        self.card2Str.set("Card2: " )
+        for i in range (0, 16):
+            self.cardStrList[i].set("Card: ")
+        
+       
 
     
     def resume():
@@ -174,7 +193,7 @@ class DisplayFunds(Frame):
         new = Toplevel(self)
         new.title("Display Funds")
         new.geometry('300x100')
-        new.lblFunds = tk.Label (new,text = "Funds: ", width  =25)
+        new.lblFunds = tk.Label (new,text = "Funds: " , width  =25)
         new.lblFunds.place(x=20, y = 20)
         new.btnReturn = tk.Button (new, text = "Return", width =15, command = self.close)
         new.btnReturn.place(x=100, y = 50)
@@ -211,11 +230,12 @@ root = Tk()
 root.title('Black Jack by Hanfei')
 root.geometry('450x150')
 
+
 '''Menu part'''
 menubar = Menu(root)
 mainmenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Game", menu=mainmenu)
-mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu,Game))
+mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu,Game()))
 mainmenu.add_command(label="Display Available Funds", command=DisplayFunds)
 mainmenu.add_command(label="Reset Funds to Zero", command=ResetFunds)
 mainmenu.add_command(label="Quit", command=donothing)
