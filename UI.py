@@ -13,6 +13,12 @@ class Card():
         else:
             self.value = 10
 
+    def getNum(self):
+        return self.num
+
+    def setValue(self,value):
+        self.value = value
+
     def toStr(self):
         return "%s of %s " % ( self.num, self.suit)
 
@@ -27,6 +33,8 @@ class Game():
         self.frm = Frame(root)
         self.frm.pack()
         self.frm.point = 0
+        self.frm.isSoft = False
+        self.frm.hasAce = False
         '''Create card deck'''
         self.frm.deck = []
         self.frm.size = 52
@@ -91,6 +99,35 @@ class Game():
     '''returns a list of 2 cards'''
 
     def calcSum(self, oldSum, card):
+        if (card.getNum() == "A" ):
+            if (self.frm.hasAce == False):
+                card.setValue(1)
+                self.frm.hasAce = True
+            elif(self.frm.isSoft == True):
+                if (oldSum < 10):
+                    card.SetValue(1)
+                elif (oldSum == 10):
+                    card.SetValue(11)
+                    self.frm.isSoft = False
+                else:
+                    cardSetValue(1)
+                    self.frm.isSoft = False
+            else:
+                card.SetValue(1)
+        else:
+            if (self.frm.hasAce == False):
+                pass
+            elif (self.frm.isSoft == True):
+                if ((oldSum + card.value)<11):
+                    pass
+                elif ((oldSum + card.value) == 11):
+                    self.frm.point + 10
+                    self.frm.isSoft == False
+                else:
+                    self.frm.isSoft == False
+            else:
+                pass
+            
         self.frm.point = oldSum + card.value 
 
     '''handles all the steps of game'''
