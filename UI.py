@@ -26,60 +26,59 @@ def donothing():
 
 class Game():
     
-    
-    point = 0
-    '''Create card deck'''
-    deck = []
-    size = 52
-    suits = ["Spade", "Heart", "Diamond", "Club"]
-    nums = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
-    cardStrList = []
-    cardLblList = []
-    numOfDraw = 0
-
-
     '''Draw game board'''
     def __init__(self, fund, root):
-        self.fund = fund
         
+        self.frm = Frame(root)
+        self.frm.pack()
+        self.frm.point = 0
+        '''Create card deck'''
+        self.frm.deck = []
+        self.frm.size = 52
+        self.frm.suits = ["Spade", "Heart", "Diamond", "Club"]
+        self.frm.nums = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+        self.frm.cardStrList = []
+        self.frm.cardLblList = []
+        self.frm.numOfDraw = 0
+        self.frm.fund = fund
         '''Create card deck'''
         for j in range (0, 4):
             for i in range (0, 13):
-                newCard = Card(self.suits[j], self.nums[i])
-                self.deck.append(newCard)
+                newCard = Card(self.frm.suits[j], self.frm.nums[i])
+                self.frm.deck.append(newCard)
 
         '''Display card history'''
         for i in range (0, 16):
             cardString = StringVar()
             cardString.set("Card")
-            self.cardStrList.append(cardString)
-            cardLabel = tk.Label(textvariable = self.cardStrList[i])
-            self.cardLblList.append (cardLabel)
+            self.frm.cardStrList.append(cardString)
+            cardLabel = tk.Label(self.frm,textvariable = self.frm.cardStrList[i])
+            self.frm.cardLblList.append (cardLabel)
         
         for i in range (0, 8):
-            self.cardLblList[i].grid(row = i, column = 0, sticky = W+E+N+S)
+            self.frm.cardLblList[i].grid(row = i, column = 0, sticky = W+E+N+S)
         
         for i in range (8, 16):
-            self.cardLblList[i].grid(row = (i-8), column = 2, sticky = W+E+N+S)
+            self.frm.cardLblList[i].grid(row = (i-8), column = 2, sticky = W+E+N+S)
 
         '''Interactive area'''
         
-        self.pointStr = StringVar() 
-        self.pointStr.set( "Current Point: " + str(self.point) )
-        lblPoint = tk.Label (textvariable = self.pointStr, width = 25)
+        self.frm.pointStr = StringVar() 
+        self.frm.pointStr.set( "Current Point: " + str(self.frm.point) )
+        lblPoint = tk.Label (self.frm,textvariable = self.frm.pointStr, width = 25)
         lblPoint.grid(row = 0, column = 1, rowspan = 2, sticky = W+E+N+S)
        
-        self.cardStr = StringVar() 
-        self.cardStr.set( "Card1: "  )
-        lblCard = tk.Label( textvariable = self.cardStr, width = 25)
+        self.frm.cardStr = StringVar() 
+        self.frm.cardStr.set( "Card1: "  )
+        lblCard = tk.Label( self.frm,textvariable = self.frm.cardStr, width = 25)
         lblCard.grid(row = 2, column = 1, rowspan = 2, sticky = W+E+N+S)
 
-        self.card2Str = StringVar() 
-        self.card2Str.set( "Card2: ")
-        lblCard2 = tk.Label( textvariable = self.card2Str , width = 25)
+        self.frm.card2Str = StringVar() 
+        self.frm.card2Str.set( "Card2: ")
+        lblCard2 = tk.Label( self.frm,textvariable = self.frm.card2Str , width = 25)
         lblCard2.grid(row = 4, column = 1, rowspan = 1, sticky = W+E+N+S)
             
-        btnPlay = tk.Button( text = "Draw cards", width = 15, command = self.play )
+        btnPlay = tk.Button(self.frm, text = "Draw cards", width = 15, command = self.play )
         btnPlay.grid(row = 5, column = 1, rowspan = 2, sticky = W+E+N+S)
 
     '''receives the deck and size'''
@@ -91,65 +90,65 @@ class Game():
         #card2 = deck [rand2]
         #del deck[rand2];
         #cardPair = [card1, card2]
-        self.size = self.size - 1
-        self.numOfDraw = self.numOfDraw + 1
+        self.frm.size = self.frm.size - 1
+        self.frm.numOfDraw = self.frm.numOfDraw + 1
         return card
     '''returns a list of 2 cards'''
 
     def calcSum(self, oldSum, card):
-        self.point = oldSum + card.value 
+        self.frm.point = oldSum + card.value 
 
     '''handles all the steps of game'''
     def play(self):
-        if (self.size < 1 or self.numOfDraw > 15): 
+        if (self.frm.size < 1 or self.frm.numOfDraw > 15): 
             pass #TODO popup message 
-        elif (self.numOfDraw == 0): #first draw by user, draw 2 times
-            card1=self.drawCards(self.deck,self.size)
-            self.calcSum(self.point, card1)
-            self.cardStr.set("Card: " + card1.toStr())
-            self.cardStrList[self.numOfDraw - 1].set("Card: " + card1.toStr())
+        elif (self.frm.numOfDraw == 0): #first draw by user, draw 2 times
+            card1=self.drawCards(self.frm.deck,self.frm.size)
+            self.calcSum(self.frm.point, card1)
+            self.frm.cardStr.set("Card: " + card1.toStr())
+            self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card1.toStr())
             
-            card2=self.drawCards(self.deck,self.size)
-            self.calcSum(self.point, card2)
-            self.card2Str.set("Card2: " + card2.toStr())
-            self.cardStrList[self.numOfDraw - 1].set("Card: " + card2.toStr())
+            card2=self.drawCards(self.frm.deck,self.frm.size)
+            self.calcSum(self.frm.point, card2)
+            self.frm.card2Str.set("Card2: " + card2.toStr())
+            self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card2.toStr())
             
-            self.pointStr.set("Current Point: " + str(self.point))       
+            self.frm.pointStr.set("Current Point: " + str(self.frm.point))       
         else:
             '''Draw cards'''
-            card = self.drawCards(self.deck, self.size)
-            self.calcSum(self.point, card)
+            card = self.drawCards(self.frm.deck, self.frm.size)
+            self.calcSum(self.frm.point, card)
             '''Redraw play board'''
-            self.card2Str.set("")
-            self.cardStr.set("Card: " + card.toStr())
-            self.cardStrList[self.numOfDraw - 1].set("Card: " + card.toStr())
-            self.pointStr.set("Current Point: " + str(self.point))
+            self.frm.card2Str.set("")
+            self.frm.cardStr.set("Card: " + card.toStr())
+            self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card.toStr())
+            self.frm.pointStr.set("Current Point: " + str(self.frm.point))
 
             
         '''Update status'''
-        if (self.point<21) :
+        if (self.frm.point<21) :
             isContinue = mBox.askyesno("Continue?", "Not reached 21, Continue?")
             if (isContinue == False):
                 self.resetGame()
-        elif (self.point == 21):
-            self.fund[0] += 100
-            print("fund: " + str(self.fund))
+        elif (self.frm.point == 21):
+            self.frm.fund[0] += 100
+            print("fund: " + str(self.frm.fund))
             isNewRound = mBox.askyesno("Win", "You Win ! Start anthoer round?")
             if (isNewRound == False):
                 self.resumeMenu()
-                self.clearBoard()
+                self.clearBoard(self.frm)
                 #TODO: empty board;
             else:
                 self.resetGame()            
             #TODO: resetBoard
             #TODO: ask play again
         else:
-            self.fund[0] -=50
-            print("fund: " + str(self.fund))
+            self.frm.fund[0] -=50
+            print("fund: " + str(self.frm.fund))
             isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
             if (isNewRound == False):
                 self.resumeMenu()
-                self.clearBoard()
+                self.clearBoard(self.frm)
                 #TODO: empty board;
             else:
                 self.resetGame()
@@ -161,21 +160,21 @@ class Game():
     def resetGame(self):
         for j in range (0, 4):
             for i in range (0, 13):
-                newCard = Card(self.suits[j], self.nums[i])
-                self.deck.append(newCard)
+                newCard = Card(self.frm.suits[j], self.frm.nums[i])
+                self.frm.deck.append(newCard)
 
-        self.size = 52
-        self.numOfDraw = 0
+        self.frm.size = 52
+        self.frm.numOfDraw = 0
         
-        self.point = 0
-        self.pointStr.set( "Current Point: " + str(self.point) )
-        self.cardStr.set( "Card1: "  )
-        self.card2Str.set("Card2: " )
+        self.frm.point = 0
+        self.frm.pointStr.set( "Current Point: " + str(self.frm.point) )
+        self.frm.cardStr.set( "Card1: "  )
+        self.frm.card2Str.set("Card2: " )
         for i in range (0, 16):
-            self.cardStrList[i].set("Card: ")
+            self.frm.cardStrList[i].set("Card: ")
         
-    def clearBoard(self):
-        self.frame.destroy(self)
+    def clearBoard(self, frame):
+        frame.destroy()
 
     
     def resumeMenu(self):
