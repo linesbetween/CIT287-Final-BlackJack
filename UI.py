@@ -39,7 +39,8 @@ class Game():
 
 
     '''Draw game board'''
-    def __init__(self):
+    def __init__(self, fund):
+        self.fund = fund
         
         '''Create card deck'''
         for j in range (0, 4):
@@ -131,14 +132,26 @@ class Game():
             if (isContinue == False):
                 self.resetGame()
         elif (self.point == 21):
-            mBox.showinfo("Win", "You Win !")
-            self.fund += 100
+            isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
+            if (isNewRound == False):
+                self.resumeMenu()
+                #TODO: empty board;
+            else:
+                self.resetGame()
+            self.fund[0] += 100
+            print("fund: " + str(self.fund))
             #TODO: resetBoard
             #TODO: ask play again
         else:
-            mBox.showinfo("Lose", "You Lose !")
-            self.fund -=50
-            self.resetGame()
+            self.fund[0] -=50
+            print("fund: " + str(self.fund))
+            isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
+            if (isNewRound == False):
+                self.resumeMenu()
+                #TODO: empty board;
+            else:
+                self.resetGame()
+           
             #TODO: resetBoard
             #TODO: check fund
             #TODO: ask playagain
@@ -159,10 +172,11 @@ class Game():
         for i in range (0, 16):
             self.cardStrList[i].set("Card: ")
         
-       
+    def clearBoard(self):
+        pass
 
     
-    def resume():
+    def resumeMenu(self):
         menubar.entryconfig("Game", state = "normal")
     
     #to draw cards, display cards, calculate sum, decide winning.
@@ -188,12 +202,13 @@ class GameUI():
         pass
 """
 class DisplayFunds(Frame):
-    def __init__(self):
+    def __init__(self, fund):
+        self.fund = fund
         new = tk.Frame.__init__(self)
         new = Toplevel(self)
         new.title("Display Funds")
         new.geometry('300x100')
-        new.lblFunds = tk.Label (new,text = "Funds: " , width  =25)
+        new.lblFunds = tk.Label (new,text = "Funds: " + str(self.fund[0]), width  =25)
         new.lblFunds.place(x=20, y = 20)
         new.btnReturn = tk.Button (new, text = "Return", width =15, command = self.close)
         new.btnReturn.place(x=100, y = 50)
@@ -217,6 +232,7 @@ class ResetFunds(Frame):
     def close(self):
         self.destroy()
 
+'''class Main'''
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
         for f in funcs:
@@ -230,13 +246,14 @@ root = Tk()
 root.title('Black Jack by Hanfei')
 root.geometry('450x150')
 
+fund= [1000]
 
 '''Menu part'''
 menubar = Menu(root)
 mainmenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Game", menu=mainmenu)
-mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu,Game()))
-mainmenu.add_command(label="Display Available Funds", command=DisplayFunds)
+mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu, lambda: Game(fund)))
+mainmenu.add_command(label="Display Available Funds", command=lambda : DisplayFunds(fund))
 mainmenu.add_command(label="Reset Funds to Zero", command=ResetFunds)
 mainmenu.add_command(label="Quit", command=donothing)
 
