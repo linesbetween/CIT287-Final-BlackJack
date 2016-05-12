@@ -30,7 +30,7 @@ class Game():
     '''Draw game board'''
     def __init__(self, fund, root):
         
-        self.frm = Frame(root)
+        self.frm = Frame(root, bg = 'blue')
         self.frm.pack()
         self.frm.point = 0
         self.frm.isSoft = False
@@ -53,32 +53,32 @@ class Game():
         '''Display card history'''
         for i in range (0, 16):
             cardString = StringVar()
-            cardString.set("Card")
+            cardString.set("Card holder")
             self.frm.cardStrList.append(cardString)
-            cardLabel = tk.Label(self.frm,textvariable = self.frm.cardStrList[i])
+            cardLabel = tk.Label(self.frm,textvariable = self.frm.cardStrList[i], width =20 )
             self.frm.cardLblList.append (cardLabel)
         
         for i in range (0, 8):
-            self.frm.cardLblList[i].grid(row = i, column = 0, sticky = W+E+N+S)
+            self.frm.cardLblList[i].grid(row = i, column = 0, sticky = W+E)
         
         for i in range (8, 16):
-            self.frm.cardLblList[i].grid(row = (i-8), column = 2, sticky = W+E+N+S)
+            self.frm.cardLblList[i].grid(row = (i-8), column = 2, sticky = W+E)
 
         '''Interactive area'''
         
         self.frm.pointStr = StringVar() 
         self.frm.pointStr.set( "Current Point: " + str(self.frm.point) )
-        lblPoint = tk.Label (self.frm,textvariable = self.frm.pointStr, width = 25)
+        lblPoint = tk.Label (self.frm,textvariable = self.frm.pointStr, width = 20)
         lblPoint.grid(row = 0, column = 1, rowspan = 2, sticky = W+E+N+S)
        
         self.frm.cardStr = StringVar() 
         self.frm.cardStr.set( "Card1: "  )
-        lblCard = tk.Label( self.frm,textvariable = self.frm.cardStr, width = 25)
+        lblCard = tk.Label( self.frm,textvariable = self.frm.cardStr, width = 20)
         lblCard.grid(row = 2, column = 1, rowspan = 2, sticky = W+E+N+S)
 
         self.frm.card2Str = StringVar() 
         self.frm.card2Str.set( "Card2: ")
-        lblCard2 = tk.Label( self.frm,textvariable = self.frm.card2Str , width = 25)
+        lblCard2 = tk.Label( self.frm,textvariable = self.frm.card2Str , width = 20)
         lblCard2.grid(row = 4, column = 1, rowspan = 1, sticky = W+E+N+S)
             
         btnPlay = tk.Button(self.frm, text = "Draw cards", width = 15, command = self.play )
@@ -184,7 +184,7 @@ class Game():
             self.frm.fund[0] -=50
             print("fund: " + str(self.frm.fund[0]))
 
-            if (fund[0]<=0):
+            if (fund[0]<= -1000):
                 mBox.showinfo("Out of funds", "You run out of funds! Please exit")
                 self.clearBoard(self.frm)
                 self.resumeMenuWithExit()
@@ -269,10 +269,9 @@ class DisplayFunds():
         menubar.entryconfig("Game", state = "disabled")
         self.frm = Frame(root)
         self.frm.pack()
-        self.frm.lblFunds = tk.Label (self.frm,text = "Funds: " + str(fund[0]), width  =25)
+        self.frm.lblFunds = tk.Label (self.frm,text = "Funds: " + str(fund[0]), width  =25, height = 5)
         self.frm.lblFunds.grid(row=0, column = 0)
         self.frm.btnReturn = tk.Button (self.frm, text = "Ok", width =15, command = self.close)
-        print("destroy")
         self.frm.btnReturn.grid(row=1, column = 0)
 
     def close(self):
@@ -301,7 +300,7 @@ def ResetFunds(fund):
     menubar.entryconfig("Game", state = "disabled")
     isSure = mBox.askyesno("Reset Winning", "Are you sure?")
     if (isSure == True):
-        fund[0] = 1000
+        fund[0] = 0
     menubar.entryconfig("Game", state = "normal")
 
 def exitGame():
@@ -323,7 +322,7 @@ root = Tk()
 root.title('Black Jack by Hanfei')
 root.geometry('450x150')
 
-fund= [1000]
+fund= [0]
 
 '''Menu part'''
 menubar = Menu(root)
