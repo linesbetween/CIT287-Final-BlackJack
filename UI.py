@@ -101,19 +101,27 @@ class Game():
     def calcSum(self, oldSum, card):
         if (card.getNum() == "A" ):
             if (self.frm.hasAce == False):
-                card.setValue(1)
+                if (oldSum <10):
+                    card.setValue(1)
+                    self.frm.isSoft = True                    
+                elif(oldSum == 10):
+                    card.setValue(11)
+                    self.frm.isSoft = False
+                else:
+                    card.setValue(1)
+                    self.frm.isSoft = False
                 self.frm.hasAce = True
             elif(self.frm.isSoft == True):
                 if (oldSum < 10):
-                    card.SetValue(1)
+                    card.setValue(1)
                 elif (oldSum == 10):
-                    card.SetValue(11)
+                    card.setValue(11)
                     self.frm.isSoft = False
                 else:
-                    cardSetValue(1)
+                    card.setValue(1)
                     self.frm.isSoft = False
             else:
-                card.SetValue(1)
+                card.setValue(1)
         else:
             if (self.frm.hasAce == False):
                 pass
@@ -121,14 +129,14 @@ class Game():
                 if ((oldSum + card.value)<11):
                     pass
                 elif ((oldSum + card.value) == 11):
-                    self.frm.point + 10
+                    self.frm.point += 10
                     self.frm.isSoft == False
                 else:
                     self.frm.isSoft == False
             else:
                 pass
             
-        self.frm.point = oldSum + card.value 
+        self.frm.point = oldSum + card.value
 
     '''handles all the steps of game'''
     def play(self):
@@ -145,7 +153,7 @@ class Game():
             self.calcSum(self.frm.point, card2)
             self.frm.card2Str.set("Card2: " + card2.toStr())
             self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card2.toStr())
-            
+
             self.frm.pointStr.set("Current Point: " + str(self.frm.point))       
         else: # after 1st draw, draw 1 card each time
             '''Draw cards'''
