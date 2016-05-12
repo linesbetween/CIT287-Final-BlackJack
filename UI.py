@@ -39,7 +39,7 @@ class Game():
 
 
     '''Draw game board'''
-    def __init__(self, fund):
+    def __init__(self, fund, root):
         self.fund = fund
         
         '''Create card deck'''
@@ -132,14 +132,15 @@ class Game():
             if (isContinue == False):
                 self.resetGame()
         elif (self.point == 21):
-            isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
-            if (isNewRound == False):
-                self.resumeMenu()
-                #TODO: empty board;
-            else:
-                self.resetGame()
             self.fund[0] += 100
             print("fund: " + str(self.fund))
+            isNewRound = mBox.askyesno("Win", "You Win ! Start anthoer round?")
+            if (isNewRound == False):
+                self.resumeMenu()
+                self.clearBoard()
+                #TODO: empty board;
+            else:
+                self.resetGame()            
             #TODO: resetBoard
             #TODO: ask play again
         else:
@@ -148,6 +149,7 @@ class Game():
             isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
             if (isNewRound == False):
                 self.resumeMenu()
+                self.clearBoard()
                 #TODO: empty board;
             else:
                 self.resetGame()
@@ -173,7 +175,7 @@ class Game():
             self.cardStrList[i].set("Card: ")
         
     def clearBoard(self):
-        pass
+        self.frame.destroy(self)
 
     
     def resumeMenu(self):
@@ -252,7 +254,7 @@ fund= [1000]
 menubar = Menu(root)
 mainmenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Game", menu=mainmenu)
-mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu, lambda: Game(fund)))
+mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu, lambda: Game(fund, root)))
 mainmenu.add_command(label="Display Available Funds", command=lambda : DisplayFunds(fund))
 mainmenu.add_command(label="Reset Funds to Zero", command=ResetFunds)
 mainmenu.add_command(label="Quit", command=donothing)
