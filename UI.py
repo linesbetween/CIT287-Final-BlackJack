@@ -19,11 +19,6 @@ class Card():
     def __str__( self ):
         return "%s of %s value %d" % ( self.num, self.suit, self.value )
 
-def donothing():
-    filewin = Toplevel(root)
-    button = Button(filewin, text="Do nothing button")
-    button.pack()
-
 class Game():
     
     '''Draw game board'''
@@ -100,6 +95,7 @@ class Game():
 
     '''handles all the steps of game'''
     def play(self):
+           
         if (self.frm.size < 1 or self.frm.numOfDraw > 15): 
             pass #TODO popup message 
         elif (self.frm.numOfDraw == 0): #first draw by user, draw 2 times
@@ -114,7 +110,7 @@ class Game():
             self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card2.toStr())
             
             self.frm.pointStr.set("Current Point: " + str(self.frm.point))       
-        else:
+        else: # after 1st draw, draw 1 card each time
             '''Draw cards'''
             card = self.drawCards(self.frm.deck, self.frm.size)
             self.calcSum(self.frm.point, card)
@@ -132,30 +128,30 @@ class Game():
                 self.resetGame()
         elif (self.frm.point == 21):
             self.frm.fund[0] += 100
-            print("fund: " + str(self.frm.fund))
+            print("fund: " + str(self.frm.fund[0]))
             isNewRound = mBox.askyesno("Win", "You Win ! Start anthoer round?")
             if (isNewRound == False):
                 self.resumeMenu()
                 self.clearBoard(self.frm)
-                #TODO: empty board;
             else:
                 self.resetGame()            
-            #TODO: resetBoard
-            #TODO: ask play again
         else:
             self.frm.fund[0] -=50
-            print("fund: " + str(self.frm.fund))
-            isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
-            if (isNewRound == False):
-                self.resumeMenu()
+            print("fund: " + str(self.frm.fund[0]))
+
+            if (fund[0]<=0):
+                mBox.showinfo("Out of funds", "You run out of funds! Please exit")
                 self.clearBoard(self.frm)
-                #TODO: empty board;
+                self.resumeMenuWithExit()
             else:
-                self.resetGame()
+                isNewRound = mBox.askyesno("Lose", "You Lose ! Start anthoer round?")
+                if (isNewRound == False):
+                    self.resumeMenu()
+                    self.clearBoard(self.frm)
+                else:
+                    self.resetGame()
+                
            
-            #TODO: resetBoard
-            #TODO: check fund
-            #TODO: ask playagain
 
     def resetGame(self):
         for j in range (0, 4):
@@ -179,9 +175,12 @@ class Game():
     
     def resumeMenu(self):
         menubar.entryconfig("Game", state = "normal")
-    
-    #to draw cards, display cards, calculate sum, decide winning.
 
+    def resumeMenuWithExit(self):
+        menubar.entryconfig("Game", state = "normal")
+        mainmenu.entryconfig(0, state = "disabled")
+        mainmenu.entryconfig(1, state = "disabled")
+        mainmenu.entryconfig(2, state = "disabled")
 
 
 """
@@ -202,6 +201,8 @@ class GameUI():
     def shutdown(self):
         pass
 """
+
+"""
 class DisplayFunds(Frame):
     def __init__(self, fund):
         self.fund = fund
@@ -216,24 +217,54 @@ class DisplayFunds(Frame):
 
     def close(self):
         self.destroy()
+"""
 
+class DisplayFunds():
+    def __init__(self, fund , root):
+        menubar.entryconfig("Game", state = "disabled")
+        self.frm = Frame(root)
+        self.frm.pack()
+        self.frm.lblFunds = tk.Label (self.frm,text = "Funds: " + str(fund[0]), width  =25)
+        self.frm.lblFunds.grid(row=0, column = 0)
+        self.frm.btnReturn = tk.Button (self.frm, text = "Ok", width =15, command = self.close)
+        print("destroy")
+        self.frm.btnReturn.grid(row=1, column = 0)
 
+    def close(self):
+        menubar.entryconfig("Game", state = "normal")
+        self.frm.destroy()
+
+"""
 class ResetFunds(Frame):
-    def __init__(self):
-       
+    def __init__(self, fund):
+
+        fund[0] = 200
         new = tk.Frame.__init__(self)
         new = Toplevel(self)
         new.title("Reset Funds")
         new.geometry('300x100')
-        new.lblFunds = tk.Label (new,text = "Funds: ", width  =25)
+        new.lblFunds = tk.Label (new,text = "Funds: " + str(fund[0]), width  =25)
         new.lblFunds.place(x=20, y = 20)
         new.btnReturn = tk.Button (new, text = "Return", width =15, command=self.close)
         new.btnReturn.place(x=100, y = 50)
 
     def close(self):
         self.destroy()
+"""
 
-'''class Main'''
+def ResetFunds(fund):
+    menubar.entryconfig("Game", state = "disabled")
+    isSure = mBox.askyesno("Reset Winning", "Are you sure?")
+    if (isSure == True):
+        fund[0] = 1000
+    menubar.entryconfig("Game", state = "normal")
+
+def exitGame():
+    isSure = mBox.askyesno("Reset Winning", "Are you sure?")
+    if (isSure == True):
+        root.destroy()
+
+'''Main'''
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
         for f in funcs:
@@ -254,9 +285,9 @@ menubar = Menu(root)
 mainmenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Game", menu=mainmenu)
 mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu, lambda: Game(fund, root)))
-mainmenu.add_command(label="Display Available Funds", command=lambda : DisplayFunds(fund))
-mainmenu.add_command(label="Reset Funds to Zero", command=ResetFunds)
-mainmenu.add_command(label="Quit", command=donothing)
+mainmenu.add_command(label="Display Available Funds", command=lambda : DisplayFunds(fund, root))
+mainmenu.add_command(label="Reset Winning to Zero", command=lambda: ResetFunds(fund))
+mainmenu.add_command(label="Quit", command=exitGame)
 
 
 
