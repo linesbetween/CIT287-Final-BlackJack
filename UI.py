@@ -5,20 +5,7 @@ import tkinter.messagebox as mBox
 
 
 from NewGame import *
-
-class DisplayFunds():
-    def __init__(self, fund , root):
-        menubar.entryconfig("Game", state = "disabled")
-        self.frm = Frame(root)
-        self.frm.pack()
-        self.frm.lblFunds = tk.Label (self.frm,text = "Funds: " + str(fund[0]), width  =25, height = 5)
-        self.frm.lblFunds.grid(row=0, column = 0)
-        self.frm.btnReturn = tk.Button (self.frm, text = "Ok", width =15, command = self.close)
-        self.frm.btnReturn.grid(row=1, column = 0)
-
-    def close(self):
-        menubar.entryconfig("Game", state = "normal")
-        self.frm.destroy()
+from DisplayFunds import *
 
 
 def ResetFunds(fund):
@@ -55,7 +42,7 @@ menubar = Menu(root)
 mainmenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Game", menu=mainmenu)
 mainmenu.add_command(label="Play the Game", command= combine_funcs(lockMenu, lambda: NewGame(fund, root, menubar, mainmenu)))
-mainmenu.add_command(label="Display Available Funds", command=lambda : DisplayFunds(fund, root))
+mainmenu.add_command(label="Display Available Funds", command=lambda : DisplayFunds(fund, root, menubar))
 mainmenu.add_command(label="Reset Winning to Zero", command=lambda: ResetFunds(fund))
 mainmenu.add_command(label="Quit", command=exitGame)
 root.config(menu=menubar)
