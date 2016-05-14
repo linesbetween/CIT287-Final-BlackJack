@@ -6,6 +6,7 @@ import tkinter.messagebox as mBox
 from Card import *
 
 class NewGame(Frame):
+    colours = ['red','green','orange','white','yellow','blue']
     
     '''Draw game board'''
     def __init__(self, fund, root, menubar, mainmenu):
@@ -37,7 +38,7 @@ class NewGame(Frame):
             cardString = StringVar()
             cardString.set("Card holder")
             self.frm.cardStrList.append(cardString)
-            cardLabel = tk.Label(self.frm,textvariable = self.frm.cardStrList[i], width =20 )
+            cardLabel = tk.Label(self.frm,textvariable = self.frm.cardStrList[i], bg = 'white',relief=RIDGE, width =20 )
             self.frm.cardLblList.append (cardLabel)
         
         for i in range (0, 8):
@@ -78,8 +79,8 @@ class NewGame(Frame):
         self.frm.size = self.frm.size - 1
         self.frm.numOfDraw = self.frm.numOfDraw + 1
         return card
-    '''returns a list of 2 cards'''
-
+   
+    '''Calculate currnet point '''
     def calcSum(self, oldSum, card):
         if (card.getNum() == "A" ):
             if (self.frm.hasAce == False):
@@ -120,6 +121,18 @@ class NewGame(Frame):
             
         self.frm.point += card.value
 
+    def getCardColor(self, card):
+        if (card.getNum() == "2" or card.getNum() == "3" or card.getNum() == "4"):
+            return 'blue'
+        elif (card.getNum() == "5" or card.getNum() == "6" or card.getNum() == "7"):
+            return 'green'
+        elif (card.getNum() == "8" or card.getNum() == "9" or card.getNum() == "10"):
+            return 'yellow'
+        elif (card.getNum() == "J" or card.getNum() == "Q" or card.getNum() == "K"):
+            return 'orange'
+        elif (card.getNum() == "A"):
+            return 'red'
+
     '''handles all the steps of game'''
     def play(self):
            
@@ -130,11 +143,13 @@ class NewGame(Frame):
             self.calcSum(self.frm.point, card1)
             self.frm.cardStr.set("Card: " + card1.toStr())
             self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card1.toStr())
+            self.frm.cardLblList[self.frm.numOfDraw - 1].configure(bg = self.getCardColor(card1))
             
             card2=self.drawCards(self.frm.deck,self.frm.size)
             self.calcSum(self.frm.point, card2)
             self.frm.card2Str.set("Card2: " + card2.toStr())
             self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card2.toStr())
+            self.frm.cardLblList[self.frm.numOfDraw - 1].configure(bg = self.getCardColor(card2))
 
             self.frm.pointStr.set("Current Point: " + str(self.frm.point))       
         else: # after 1st draw, draw 1 card each time
@@ -146,6 +161,7 @@ class NewGame(Frame):
             self.frm.cardStr.set("Card: " + card.toStr())
             self.frm.cardStrList[self.frm.numOfDraw - 1].set("Card: " + card.toStr())
             self.frm.pointStr.set("Current Point: " + str(self.frm.point))
+            self.frm.cardLblList[self.frm.numOfDraw - 1].configure(bg = self.getCardColor(card))
 
             
         '''Update status'''
@@ -195,6 +211,7 @@ class NewGame(Frame):
         self.frm.card2Str.set("Card2: " )
         for i in range (0, 16):
             self.frm.cardStrList[i].set("Card: ")
+            self.frm.cardLblList[i].configure(bg = 'white')
         
     def endGame(self, frame):
         frame.destroy()
